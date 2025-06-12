@@ -69,6 +69,9 @@ function Inscription() {
                         {isLoading ? "Chargement..." : "Connexion"}
                     </button>
                 </div>
+                <div className="form-group">
+                    <p>Pas de compte ? <span style={{ textDecoration: "underline" }} onClick={() => navigate("/signin")}>C'est par ici</span></p>
+                </div>
             </div>
         </>
     );
