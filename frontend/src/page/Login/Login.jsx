@@ -26,6 +26,7 @@ function Inscription() {
             .then(data => {
                 if (data.jwt) {
                     localStorage.setItem("token", data.jwt);
+                    localStorage.setItem("idUser", data.idUser);
                     alert("Connexion réussie");
                     navigate("/");
                 } else {
