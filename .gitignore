@@ -1,4 +1,6 @@
-backend/.env
-backend/node_modules
 
+backend/nodes_modules
 frontend/node_modules
+backend/.env
+frontend/node_modules
+
