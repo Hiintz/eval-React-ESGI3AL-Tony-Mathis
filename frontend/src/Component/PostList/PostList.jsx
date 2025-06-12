@@ -1,15 +1,10 @@
 import "./PostList.css";
-import {useGetRequest} from "../../Utils/Hooks/useGetRequest.js";
-import {useEffect} from "react";
+import { useGetRequest } from "../../Utils/Hooks/useGetRequest.js";
+import { useEffect, useState } from "react";
 import PostCard from "./../PostCard/PostCard.jsx";
 
 export default function PostList() {
     const { data: resources, isLoading, error } = useGetRequest("post");
-
-    useEffect(() => {
-        console.log(resources);
-    }, [resources]);
-
 
     return (
 
