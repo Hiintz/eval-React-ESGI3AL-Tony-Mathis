@@ -66,6 +66,28 @@
     text-align: left;
 }
 
-.reaction-button{
-    margin-left:  10px;
+.reaction-button {
+    color: #555; /* Couleur grise lisible */
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: color 0.2s ease;
+}
+
+.reaction-button:hover {
+    color: #1877f2; /* bleu Facebook au survol */
+}
+
+.reaction-menu button {
+    background: none;
+    border: none;
+    margin: 0 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #555; /* couleur lisible sur fond clair */
+    transition: color 0.2s ease;
+}
+
+.reaction-menu button:hover {
+    color: #e53935; /* rouge doux au survol par exemple */
 }

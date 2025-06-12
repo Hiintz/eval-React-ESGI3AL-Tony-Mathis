@@ -1,137 +1,142 @@
 import "./PostCard.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCirclePlus, faHeart, faThumbsUp} from "@fortawesome/free-solid-svg-icons";
+import {faCirclePlus, faHeart, faThumbsUp, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {useState} from "react";
 import {usePostRequest} from "../../Utils/Hooks/usePostRequest.js";
 import {useDeleteRequest} from "../../Utils/Hooks/useDeleteRequest.js";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCirclePlus, faHeart, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
-import { usePostRequest } from "../../Utils/Hooks/usePostRequest.js";
 
-
-export default function PostCard({ post }) {
-    const userId = localStorage.getItem("idUser") || null
-
-export default function PostCard({post}) {
+export default function PostCard({post, setPosts}) {
+    const userId = localStorage.getItem("idUser") || null;
     const [menu, setMenu] = useState(false);
     const [reactions, setReactions] = useState(post.emoticons || []);
     const {postData} = usePostRequest(`emoticon`);
-    const {deleteData} = useDeleteRequest(`emoticon/${post.id}`);
-    const idUser = localStorage.getItem('idUser');
-=======
-    const [menu, setMenu] = useState(false);
-    const [reactions, setReactions] = useState(post.emoticons || []);
-    const { postData } = usePostRequest(`emoticon`);
+
+
+    const { deleteData: deleteReactions } = useDeleteRequest(`emoticon/${post.id}`);
+    const { deleteData: deletePost } = useDeleteRequest(`post/${post.id}`);
 
     const addReaction = async (type) => {
-        console.log(`Reaction :  ${type}`);
-        reactions.map((reaction) => {
-            if (reaction.emoticon === type && reaction.userId === idUser) {
-               deleteData(type, idUser);
-            }
-        });
         try {
-            const newreaction = {
-                "emoticon": type,
-                "postId": post.id,
-                "userId": idUser
-            }
-
-            await postData(newreaction);
-            setReactions([...reactions, {newreaction}]);
-            await postData(reaction);
-            setReactions([...reactions, { reaction }]);
-
+            const newReaction = {
+                emoticon: type,
+                postId: post.id,
+                userId: userId,
+            };
+            await postData(newReaction);
+            // Mets à jour avec la nouvelle réaction dans le state
+            setReactions((prev) => [...prev, newReaction])
         } catch (error) {
-            console.error("error reactions : ", error);
+            console.error("Erreur lors de l'ajout de réaction :", error);
         }
         setMenu(false);
     };
 
 
-    const deletePost = async () => {
+    // Supprimer les réactions
+    const deletePostReaction = async () => {
+        try{
+            await deleteReactions()
+            // Mets à jour le nouveau tableau vidé
+            setReactions([])
+            alert("Les reactions du post ont été supprimées");
+        }
+        catch (error) {
+            console.error("Erreur lors de la suppression de la réaction :", error);
+        }
+    }
+
+    // Supprimer le post (j'avais pas d'inspi sur le nom j'avoue)
+    const deleteThePost = async () => {
         try {
-            if (confirm("Êtes-vous sûr de vouloir supprimer ce post ?")) {
-                const response = await fetch(`http://localhost:3000/post/${post.id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                });
-                if (response.ok) {
-                    console.log("Post supprimé avec succès");
-                } else {
-                    console.error("Erreur lors de la suppression du post");
-                }
-            }
+            console.log("delete" + post.id)
+            await deletePost();
+            // Mets à jour le tableau des posts en supprimant celui qui a été supprimé
+            setPosts((prevPosts) => prevPosts.filter((p) => p.id !== post.id));
+            alert("Le post a été supprimé");
         } catch (error) {
             console.error("Erreur lors de la suppression du post :", error);
         }
     }
 
-
     return (
         <div className="card">
+
             <div className="card-header">
                 <h3>{post.authorId}</h3>
-                <p className="card-date">Created: {post.createdAt}</p>
-                <p className="card-date">Updated: {post.updatedAt}</p>
-                {console.log("post authorId", post.authorId)}
-                {console.log("userId", userId)}
-                {userId == post.authorId && (
-                    <button className="delete-button" onClick={deletePost}>Supprimer</button>
-                )}
+                <p className="card-date">
+                    Created: {new Date(post.createdAt).toLocaleString("fr-FR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                })}
+                </p>
+                <p className="card-date">
+                    Updated: {new Date(post.updatedAt).toLocaleString("fr-FR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                })}
+                </p>
             </div>
+
             <div className="card-body">
                 <p className="card-message">{post.message}</p>
                 {post.picture ? (
-                    <img src={`http://localhost:3000/image/${post.picture}`}
+                    <img
+                        src={`http://localhost:3000/image/${post.picture}`}
                         alt="Post"
-                        className="card-image" />
+                        className="card-image"
+                    />
                 ) : (
                     <p className="card-placeholder"></p>
                 )}
+
+
+                {/* les réactions en fonction du nombre de celles-ci */}
                 <span className="card-emoticons">
-
-                {reactions && post.emoticons.length > 1 ? (
-                    <span>{post.emoticons.length} personnes ont réagis à ce post</span>
-                ) : reactions && post.emoticons[0]?.type === "like" ? (
-                    <div>1 <FontAwesomeIcon icon={faThumbsUp}/></div>
-                ) : reactions && post.emoticons[0]?.type === "love" ? (
-                    <div>1 <FontAwesomeIcon icon={faHeart}/></div>
-                ) : null}
-
-
-                    <FontAwesomeIcon
-                        className="reaction-button"
-                        onClick={() => {
-                            setMenu(!menu);
-                        }}
-                        icon={faCirclePlus}
-                    />
-                    {reactions && post.emoticons.length > 2 ? (
-                        <span>{post.emoticons.length} personnes ont réagis à ce post</span>
-                    ) : reactions && post.emoticons[0]?.type === "like" ? (
-                        <div>1 <FontAwesomeIcon icon={faThumbsUp} /></div>
-                    ) : reactions && post.emoticons[0]?.type === "love" ? (
-                        <div>1 <FontAwesomeIcon icon={faHeart} /></div>
+                    {reactions.length > 1 ? (
+                        <span>{reactions.length} personnes ont réagi à ce post</span>
+                    ) : reactions.length === 1 && reactions[0]?.emoticon ? (
+                        <span>
+                            1{" "}<FontAwesomeIcon
+                            icon={reactions[0].emoticon === "like" ? faThumbsUp : reactions[0].emoticon === "love" ? faHeart : null}/>
+                        </span>
                     ) : null}
-                    <FontAwesomeIcon className="reaction-button" onClick={() => {
-                        setMenu(!menu);
-                    }} icon={faCirclePlus} />
-                    {menu && (
-                        <div className="reaction-menu">
-                            <button onClick={() => addReaction("like")}>
-                                <FontAwesomeIcon icon={faThumbsUp}/>
-                            </button>
-                            <button onClick={() => addReaction("love")}>
-                                <FontAwesomeIcon icon={faHeart}/>
-                            </button>
-                        </div>
-                    )}
-            </span>
+                </span>
+
+
+                {/* Bouton d'ajout de réactions */}
+                <FontAwesomeIcon
+                    className="reaction-button"
+                    onClick={() => setMenu(!menu)}
+                    icon={faCirclePlus}
+                />
+
+                {/* menu des réactions */}
+                {menu && (
+                    <div className="reaction-menu">
+                        <button onClick={() => addReaction("like")}>
+                            <FontAwesomeIcon icon={faThumbsUp}/>
+                        </button>
+                        <button onClick={() => addReaction("love")}>
+                            <FontAwesomeIcon icon={faHeart}/>
+                        </button>
+                    </div>
+                )}
+
+                {/* Bouton de suppression du post */}
+                <FontAwesomeIcon
+                    className="reaction-button"
+                    onClick={() => deletePostReaction()}
+                    icon={faTrash}/>
             </div>
+
+            {/* attention ici on laisse bien que 2 == sinon ça pète */}
+            {userId == post.authorId && <button onClick={deleteThePost} className="close-button">Supprimer le post</button>}
         </div>
     );
 }

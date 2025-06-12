@@ -20,6 +20,12 @@ const dataset = async () => {
         nickname: "User2"
     });
 
+    await User.create({
+        email: "mathisdumage0@gmail.com",
+        password: bcrypt.hashSync('12345', 10),
+        nickname: "mathou"
+    });
+
     // Jeu de données Posts
     await Posts.create({
         message: "Hello World!",

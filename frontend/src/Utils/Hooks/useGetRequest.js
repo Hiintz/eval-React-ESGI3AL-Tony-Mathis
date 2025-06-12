@@ -37,7 +37,9 @@ export function useGetRequest(url) {
 
     useEffect(() => {
             getData().then(data => {
-                console.log('Données: ' + data);
+                if(data){
+                    setData(data);
+                }
             });
     }, [url]);
 
