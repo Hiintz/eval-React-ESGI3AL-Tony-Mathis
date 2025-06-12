@@ -21,6 +21,8 @@ database();
 app.use(express.json());
 app.use(cors())
 
+app.use('/image', express.static('images'));
+
 app.use('/auth', authRoute);
 app.use('/user', userRoute);
 app.use('/post', postRoute);
