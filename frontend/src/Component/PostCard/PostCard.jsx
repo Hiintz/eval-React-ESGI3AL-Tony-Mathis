@@ -1,12 +1,14 @@
 import "./PostCard.css";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCirclePlus, faHeart, faThumbsUp} from "@fortawesome/free-solid-svg-icons";
-import {useState} from "react";
-import {usePostRequest} from "../../Utils/Hooks/usePostRequest.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCirclePlus, faHeart, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+import { usePostRequest } from "../../Utils/Hooks/usePostRequest.js";
 
-export default function PostCard({post}) {
-const [menu, setMenu] = useState(false);
-const [reactions, setReactions] = useState(post.emoticons || []);
+export default function PostCard({ post }) {
+    const userId = localStorage.getItem("idUser") || null
+
+    const [menu, setMenu] = useState(false);
+    const [reactions, setReactions] = useState(post.emoticons || []);
     const { postData } = usePostRequest(`emoticon`);
 
     const addReaction = async (type) => {
@@ -18,7 +20,7 @@ const [reactions, setReactions] = useState(post.emoticons || []);
             }
 
             await postData(reaction);
-            setReactions([...reactions, {reaction}]);
+            setReactions([...reactions, { reaction }]);
 
         } catch (error) {
             console.error("error reactions : ", error);
@@ -26,12 +28,38 @@ const [reactions, setReactions] = useState(post.emoticons || []);
         setMenu(false);
     };
 
+    const deletePost = async () => {
+        try {
+            if (confirm("Êtes-vous sûr de vouloir supprimer ce post ?")) {
+                const response = await fetch(`http://localhost:3000/post/${post.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                });
+                if (response.ok) {
+                    console.log("Post supprimé avec succès");
+                } else {
+                    console.error("Erreur lors de la suppression du post");
+                }
+            }
+        } catch (error) {
+            console.error("Erreur lors de la suppression du post :", error);
+        }
+    }
+
+
     return (
         <div className="card">
             <div className="card-header">
                 <h3>{post.authorId}</h3>
                 <p className="card-date">Created: {post.createdAt}</p>
                 <p className="card-date">Updated: {post.updatedAt}</p>
+                {console.log("post authorId", post.authorId)}
+                {console.log("userId", userId)}
+                {userId == post.authorId && (
+                    <button className="delete-button" onClick={deletePost}>Supprimer</button>
+                )}
             </div>
             <div className="card-body">
                 <p className="card-message">{post.message}</p>
@@ -50,7 +78,7 @@ const [reactions, setReactions] = useState(post.emoticons || []);
                     ) : reactions && post.emoticons[0]?.type === "love" ? (
                         <div>1 <FontAwesomeIcon icon={faHeart} /></div>
                     ) : null}
-                    <FontAwesomeIcon className="reaction-button" onClick={()=>{
+                    <FontAwesomeIcon className="reaction-button" onClick={() => {
                         setMenu(!menu);
                     }} icon={faCirclePlus} />
                     {menu && (
