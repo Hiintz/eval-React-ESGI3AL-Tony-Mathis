@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import PasswordField from "../../component/PasswordField/PasswordField"
 import "./Signin.css"
+import { useNavigate } from "react-router";
 
 function Inscription() {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState();
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
@@ -29,6 +32,7 @@ function Inscription() {
                     alert(data.error);
                 } else {
                     alert("Inscription réussie, vous pouvez maintenant vous connecter");
+                    navigate("/login");
                 }
             })
             .catch(error => {
@@ -89,6 +93,9 @@ function Inscription() {
                     <button onClick={login} disabled={isLoading}>
                         {isLoading ? "Chargement..." : "Créer Compte"}
                     </button>
+                </div>
+                <div className="form-group">
+                    <p>Déjà un compte ? <span style={{ textDecoration: "underline" }} onClick={() => navigate("/login")}>Connectez-vous</span></p>
                 </div>
             </div>
         </>

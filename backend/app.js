@@ -8,7 +8,6 @@ const { connect } = require('./model/connexion.js');
 const sync = require('./model/sync.js');
 const dataset = require('./model/dataset.js');
 const app = express();
-const cors = require('cors');
 
 
 const database = async () => {

@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import PasswordField from "../../component/PasswordField/PasswordField"
 import "./Login.css"
+import { useNavigate } from "react-router";
 
 function Inscription() {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +26,9 @@ function Inscription() {
             .then(data => {
                 if (data.jwt) {
                     localStorage.setItem("token", data.jwt);
+                    localStorage.setItem("idUser", data.idUser);
                     alert("Connexion réussie");
+                    navigate("/");
                 } else {
                     alert("Erreur lors de la connexion");
                 }
@@ -64,6 +69,9 @@ function Inscription() {
                     <button onClick={login} disabled={isLoading}>
                         {isLoading ? "Chargement..." : "Connexion"}
                     </button>
+                </div>
+                <div className="form-group">
+                    <p>Pas de compte ? <span style={{ textDecoration: "underline" }} onClick={() => navigate("/signin")}>C'est par ici</span></p>
                 </div>
             </div>
         </>
