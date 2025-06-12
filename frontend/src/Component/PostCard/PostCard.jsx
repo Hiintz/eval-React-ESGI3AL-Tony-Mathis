@@ -1,6 +1,6 @@
 import "./PostCard.css";
 
-export default function PostCard({post}) {
+export default function PostCard({ post }) {
 
 
     return (
@@ -13,7 +13,9 @@ export default function PostCard({post}) {
             <div className="card-body">
                 <p className="card-message">{post.message}</p>
                 {post.picture ? (
-                    <img src={post.picture} alt="Post" className="card-image"/>
+                    <img src={`http://localhost:3000/image/${post.picture}`}
+                        alt="Post"
+                        className="card-image" />
                 ) : (
                     <p className="card-placeholder"></p>
                 )}
