@@ -36,7 +36,7 @@ const dataset = async () => {
     await Posts.create({
         message: "Post with an image.",
         authorId: 1,
-        picture: "pixel-art-2025-06-101749650708067.png"
+        picture: "2voHwRpCdWkdbHo0fjwc6B9Ew_MTdb8eEx8e8e-qcXc2.jpeg1749733015464.jpg"
     });
 }
 
