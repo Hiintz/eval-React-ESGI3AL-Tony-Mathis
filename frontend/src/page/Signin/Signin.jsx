@@ -94,6 +94,9 @@ function Inscription() {
                         {isLoading ? "Chargement..." : "Créer Compte"}
                     </button>
                 </div>
+                <div className="form-group">
+                    <p>Déjà un compte ? <span style={{ textDecoration: "underline" }} onClick={() => navigate("/login")}>Connectez-vous</span></p>
+                </div>
             </div>
         </>
     );
