@@ -4,7 +4,6 @@ import {faCirclePlus, faHeart, faThumbsUp} from "@fortawesome/free-solid-svg-ico
 import {useState} from "react";
 import {usePostRequest} from "../../Utils/Hooks/usePostRequest.js";
 
-
 export default function PostCard({post}) {
 const [menu, setMenu] = useState(false);
 const [reactions, setReactions] = useState(post.emoticons || []);
@@ -37,7 +36,9 @@ const [reactions, setReactions] = useState(post.emoticons || []);
             <div className="card-body">
                 <p className="card-message">{post.message}</p>
                 {post.picture ? (
-                    <img src={post.picture} alt="Post" className="card-image"/>
+                    <img src={`http://localhost:3000/image/${post.picture}`}
+                        alt="Post"
+                        className="card-image" />
                 ) : (
                     <p className="card-placeholder"></p>
                 )}
