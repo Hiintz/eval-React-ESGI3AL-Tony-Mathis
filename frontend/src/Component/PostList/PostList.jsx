@@ -6,7 +6,6 @@ import PostCard from "./../PostCard/PostCard.jsx";
 export default function PostList() {
     const { data: resources, isLoading, error } = useGetRequest("post");
 
-
     useEffect(() => {
         console.log(resources);
     }, [resources]);
