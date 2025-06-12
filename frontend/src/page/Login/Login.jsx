@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import PasswordField from "../../component/PasswordField/PasswordField"
 import "./Login.css"
+import { useNavigate } from "react-router";
 
 function Inscription() {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +27,7 @@ function Inscription() {
                 if (data.jwt) {
                     localStorage.setItem("token", data.jwt);
                     alert("Connexion réussie");
+                    navigate("/");
                 } else {
                     alert("Erreur lors de la connexion");
                 }
