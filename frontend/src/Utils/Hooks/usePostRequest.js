@@ -1,4 +1,4 @@
-import {useState, useCallback} from 'react';
+import { useState, useCallback } from 'react';
 
 export function usePostRequest(url) {
     const [isLoading, setLoading] = useState(false);
@@ -11,13 +11,25 @@ export function usePostRequest(url) {
         setError(null);
 
         try {
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+            };
+
+            let requestBody;
+
+            // Si c'est FormData, on ne met pas Content-Type
+            if (body instanceof FormData) {
+                requestBody = body;
+            } else {
+                // Sinon c'est du JSON (pour éviter les erreur de jsonisation du form date (:))
+                headers['Content-Type'] = 'application/json';
+                requestBody = JSON.stringify(body);
+            }
+
             const response = await fetch(`http://localhost:3000/${url}`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body),
+                headers: headers,
+                body: requestBody,
             });
 
             if (!response.ok) {
@@ -31,7 +43,7 @@ export function usePostRequest(url) {
         } finally {
             setLoading(false);
         }
-    }, [url]);
+    }, [url, token]);
 
     return { isLoading, error, responseData, postData };
 }
