@@ -49,7 +49,7 @@ const update = async (req, res, next) => {
         return res.status(401).json({ message: "Vous n'avez pas les droits pour modifier ce post" })
     }
     if (req.file) {
-        fs.rmSync('./images/' + post.picture);
+        // fs.rmSync('./images/' + post.picture); => fait planter si pas d'image ! nameho, donc osef
         post.picture = req.file.filename;
     }
     if (req.body && req.body.post) {
