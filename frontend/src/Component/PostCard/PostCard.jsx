@@ -5,7 +5,7 @@ import { useState } from "react";
 import { usePostRequest } from "../../Utils/Hooks/usePostRequest.js";
 import { useDeleteRequest } from "../../Utils/Hooks/useDeleteRequest.js";
 
-export default function PostCard({ post, setPosts, refreshPosts }) {
+export default function PostCard({ post, setPosts, refreshPosts, users }) {
     const userId = localStorage.getItem("idUser") || null;
     const [menu, setMenu] = useState(false);
     const [reactions, setReactions] = useState(post.emoticons || []);
@@ -14,6 +14,13 @@ export default function PostCard({ post, setPosts, refreshPosts }) {
 
     const { deleteData: deleteReactions } = useDeleteRequest(`emoticon/${post.id}`);
     const { deleteData: deletePost } = useDeleteRequest(`post/${post.id}`);
+
+    // on cherche le nom de l'auteur du post
+    const getUserName = (authorId) => {
+        // console.log('liste des users', users);
+        const user = users.find((user) => user.id === authorId);
+        return user ? user.nickname : "Casper";
+    };
 
     const addReaction = async (type) => {
         try {
@@ -63,7 +70,7 @@ export default function PostCard({ post, setPosts, refreshPosts }) {
         <div className="card">
 
             <div className="card-header">
-                <h3>{post.authorId}</h3>
+                <h3>{getUserName(post.authorId)}</h3>
                 <p className="card-date">
                     Created: {new Date(post.createdAt).toLocaleString("fr-FR", {
                         day: "2-digit",

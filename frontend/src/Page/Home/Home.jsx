@@ -12,6 +12,8 @@ export default function Home() {
     const [posts, setPosts] = useState([]);
     const [refreshForce, setRefreshForce] = useState(0);
     const { data: resources, isLoading, error } = useGetRequest("post", refreshForce);
+    // on recupère les user pour les afficher dans les posts
+    const { data: users, isLoading: usersLoading, error: usersError } = useGetRequest("user");
 
     const navigate = useNavigate();
     const { postData } = usePostRequest(`post`);
@@ -20,7 +22,6 @@ export default function Home() {
     const forceRefresh = () => {
         setRefreshForce((prev) => prev + 1);
     }
-
 
     const handleCreatePost = async (formData) => {
         try {
@@ -49,6 +50,15 @@ export default function Home() {
 
     return (
         <div className="Home">
+            <div className="Deconnect">
+                <button onClick={() => {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("idUser");
+                    navigate("/login");
+                }}>
+                    Déconnexion
+                </button>
+            </div>
 
             <h1>Bienvenue sur le super Réseau Social de Mathou et Tony</h1>
 
@@ -67,7 +77,9 @@ export default function Home() {
             {posts && !error && (
                 <div className={"home-content"}>
                     <PostForm onSubmit={handleCreatePost} />
-                    <PostList posts={posts} setPosts={setPosts} refreshPosts={forceRefresh} /> {/* on lui passe la fonction setPosts pour mettre à jour les posts */}
+                    {/* on lui passe la fonction setPosts pour mettre à jour les posts */}
+                    {/* et on passe users pour les afficher dans les posts */}
+                    <PostList posts={posts} setPosts={setPosts} refreshPosts={forceRefresh} users={users} />
                 </div>
             )}
         </div>
