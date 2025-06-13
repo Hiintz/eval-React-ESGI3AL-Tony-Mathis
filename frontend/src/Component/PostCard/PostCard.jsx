@@ -1,16 +1,19 @@
 import "./PostCard.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCirclePlus, faHeart, faThumbsUp, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCirclePlus, faHeart, faThumbsUp, faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { usePostRequest } from "../../Utils/Hooks/usePostRequest.js";
 import { useDeleteRequest } from "../../Utils/Hooks/useDeleteRequest.js";
+import { usePutRequest } from "../../Utils/Hooks/usePutRequest.js";
+import PostForm from "../PostForm/PostForm.jsx";
 
 export default function PostCard({ post, setPosts, refreshPosts, users }) {
     const userId = localStorage.getItem("idUser") || null;
     const [menu, setMenu] = useState(false);
     const [reactions, setReactions] = useState(post.emoticons || []);
+    const [isEditing, setIsEditing] = useState(false);
     const { postData } = usePostRequest(`emoticon`);
-
+    const { putData } = usePutRequest(`post/${post.id}`);
 
     const { deleteData: deleteReactions } = useDeleteRequest(`emoticon/${post.id}`);
     const { deleteData: deletePost } = useDeleteRequest(`post/${post.id}`);
@@ -64,6 +67,40 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
         } catch (error) {
             console.error("Erreur lors de la suppression du post :", error);
         }
+    }
+
+    // modif le post (le mien est mieux)
+    const handleEditPost = async (formData) => {
+        try {
+            await putData(formData);
+            setIsEditing(false);
+            refreshPosts();
+        } catch (error) {
+            console.error("Erreur lors de la modification du post :", error);
+        }
+    }
+
+    // pour les incertain
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+    }
+
+    // affichage du formulaire si on est en modif
+    if (isEditing) {
+        return (
+            <div className="card editing-card">
+                <div className="card-header">
+                    <h3>Modifier le post de {getUserName(post.authorId)}</h3>
+                </div>
+                <PostForm
+                    content={post.message}
+                    onSubmit={handleEditPost}
+                    isEditing={true}
+                    onCancel={handleCancelEdit}
+                    existingPicture={post.picture}
+                />
+            </div>
+        );
     }
 
     return (
@@ -136,7 +173,7 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
                     </div>
                 )}
 
-                {/* Bouton de suppression du post */}
+                {/* Bouton de suppression des reactions */}
                 <FontAwesomeIcon
                     className="reaction-button"
                     onClick={() => deletePostReaction()}
@@ -144,7 +181,17 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
             </div>
 
             {/* attention ici on laisse bien que 2 == sinon ça pète */}
-            {userId == post.authorId && <button onClick={deleteThePost} className="close-button">Supprimer le post</button>}
+            {/* delete et update du post */}
+            {userId == post.authorId && (
+                <div className="post-actions">
+                    <button onClick={() => setIsEditing(true)} className="edit-button">
+                        <FontAwesomeIcon icon={faEdit} /> Modifier
+                    </button>
+                    <button onClick={deleteThePost} className="close-button">
+                        Supprimer le post
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

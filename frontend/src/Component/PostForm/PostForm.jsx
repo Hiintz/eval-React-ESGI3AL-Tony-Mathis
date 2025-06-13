@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import "./PostForm.css";
 
-
-function PostForm({ content = null, onSubmit }) {
+function PostForm({ content = null, onSubmit, isEditing = false, onCancel = null, existingPicture = null }) {
     const [postContent, setPostContent] = useState(content || "");
     const [picture, setPicture] = useState(null);
 
@@ -26,20 +25,60 @@ function PostForm({ content = null, onSubmit }) {
 
         onSubmit(formData);
 
-        setPostContent("");
-        setPicture(null);
+        if (!isEditing) {
+            setPostContent("");
+            setPicture(null);
+        }
+    }
+
+    const handleCancel = () => {
+        if (onCancel) {
+            onCancel();
+        }
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className={isEditing ? "edit-form" : ""}>
             <div className="form-group">
-                <input type="text" placeholder="Nouveau post" id="postInput" name="postInput" value={postContent} onChange={(e) => setPostContent(e.target.value)} required />
+                <input
+                    type="text"
+                    placeholder={isEditing ? "Modifier le post" : "Nouveau post"}
+                    id="postInput"
+                    name="postInput"
+                    value={postContent}
+                    onChange={(e) => setPostContent(e.target.value)}
+                    required
+                />
             </div>
             <div className="form-group">
                 <label htmlFor="file">(optionnel)</label>
-                <input type="file" id="file" name="file" onChange={(e) => setPicture(e.target.files[0])} />
+                <input
+                    type="file"
+                    id="file"
+                    name="file"
+                    onChange={(e) => setPicture(e.target.files[0])}
+                />
+                {existingPicture && !picture && (
+                    <div className="existing-picture">
+                        <p>Image actuelle:</p>
+                        <img
+                            src={`http://localhost:3000/image/${existingPicture}`}
+                            alt="Image actuelle"
+                            style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                        />
+                    </div>
+                )}
             </div>
-            <button type="submit">Valider</button>
+            <div className="form-buttons">
+                <button type="submit">
+                    {isEditing ? "Modifier" : "Valider"}
+                </button>
+                {isEditing && (
+                    <button type="button" onClick={handleCancel} className="cancel-btn">
+                        Annuler
+                    </button>
+                )}
+            </div>
         </form>
     );
 }
