@@ -21,6 +21,9 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
     // on cherche le nom de l'auteur du post
     const getUserName = (authorId) => {
         // console.log('liste des users', users);
+        if (!users || !Array.isArray(users)) {
+            return `Casper ${authorId}`;
+        }
         const user = users.find((user) => user.id === authorId);
         return user ? user.nickname : "Casper";
     };
@@ -80,7 +83,7 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
         }
     }
 
-    // pour les incertain
+    // pour les incertains
     const handleCancelEdit = () => {
         setIsEditing(false);
     }

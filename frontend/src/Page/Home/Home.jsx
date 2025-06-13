@@ -63,7 +63,7 @@ export default function Home() {
             <h1>Bienvenue sur le super Réseau Social de Mathou et Tony</h1>
 
             {/* Petit loader si le hook nous renvoie loading */}
-            {isLoading && <div className="loading">Chargement de l'application...</div>}
+            {(isLoading || usersLoading) && <div className="loading">Chargement de l'application...</div>}
 
             {/* Si le hook renvoie une erreur on affiche un message d'erreur personnalisé fait spécialement pour toi mon petit tony */}
             {error &&
