@@ -1,18 +1,18 @@
 import "./PostList.css";
 import PostCard from "./../PostCard/PostCard.jsx";
 
-export default function PostList({posts, setPosts} ) {
-
-
+export default function PostList({ posts, setPosts, refreshPosts }) {
     return (
-
         <div className="post-list">
             {posts ? (
-                posts.map((post) => (
-                    <div key={post.id} className="post-card">
-                        <PostCard post={post} setPosts={setPosts} />
-                    </div>
-                ))
+                posts
+                    .slice()
+                    .reverse() // pour inverser l'ordre des posts, sans toucher à la backend
+                    .map((post) => (
+                        <div key={post.id} className="post-card">
+                            <PostCard post={post} setPosts={setPosts} refreshPosts={refreshPosts} /> {/* on lui passe aussi la fonction de rafraichissement des posts */}
+                        </div>
+                    ))
             ) : (
                 <div className="loading">Chargement des posts...</div>
             )}

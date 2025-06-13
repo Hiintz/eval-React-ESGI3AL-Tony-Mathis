@@ -1,15 +1,15 @@
 import "./PostCard.css";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCirclePlus, faHeart, faThumbsUp, faTrash} from "@fortawesome/free-solid-svg-icons";
-import {useState} from "react";
-import {usePostRequest} from "../../Utils/Hooks/usePostRequest.js";
-import {useDeleteRequest} from "../../Utils/Hooks/useDeleteRequest.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCirclePlus, faHeart, faThumbsUp, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+import { usePostRequest } from "../../Utils/Hooks/usePostRequest.js";
+import { useDeleteRequest } from "../../Utils/Hooks/useDeleteRequest.js";
 
-export default function PostCard({post, setPosts}) {
+export default function PostCard({ post, setPosts, refreshPosts }) {
     const userId = localStorage.getItem("idUser") || null;
     const [menu, setMenu] = useState(false);
     const [reactions, setReactions] = useState(post.emoticons || []);
-    const {postData} = usePostRequest(`emoticon`);
+    const { postData } = usePostRequest(`emoticon`);
 
 
     const { deleteData: deleteReactions } = useDeleteRequest(`emoticon/${post.id}`);
@@ -34,7 +34,7 @@ export default function PostCard({post, setPosts}) {
 
     // Supprimer les réactions
     const deletePostReaction = async () => {
-        try{
+        try {
             await deleteReactions()
             // Mets à jour le nouveau tableau vidé
             setReactions([])
@@ -48,11 +48,12 @@ export default function PostCard({post, setPosts}) {
     // Supprimer le post (j'avais pas d'inspi sur le nom j'avoue)
     const deleteThePost = async () => {
         try {
-            console.log("delete" + post.id)
-            await deletePost();
-            // Mets à jour le tableau des posts en supprimant celui qui a été supprimé
-            setPosts((prevPosts) => prevPosts.filter((p) => p.id !== post.id));
-            alert("Le post a été supprimé");
+            if (confirm("Êtes-vous sûr de vouloir supprimer ce post ?")) {
+                console.log("delete" + post.id)
+                await deletePost();
+                // Rafraîchit la liste des posts après suppression
+                refreshPosts();
+            }
         } catch (error) {
             console.error("Erreur lors de la suppression du post :", error);
         }
@@ -65,21 +66,21 @@ export default function PostCard({post, setPosts}) {
                 <h3>{post.authorId}</h3>
                 <p className="card-date">
                     Created: {new Date(post.createdAt).toLocaleString("fr-FR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit"
-                })}
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    })}
                 </p>
                 <p className="card-date">
                     Updated: {new Date(post.updatedAt).toLocaleString("fr-FR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit"
-                })}
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    })}
                 </p>
             </div>
 
@@ -103,7 +104,7 @@ export default function PostCard({post, setPosts}) {
                     ) : reactions.length === 1 && reactions[0]?.emoticon ? (
                         <span>
                             1{" "}<FontAwesomeIcon
-                            icon={reactions[0].emoticon === "like" ? faThumbsUp : reactions[0].emoticon === "love" ? faHeart : null}/>
+                                icon={reactions[0].emoticon === "like" ? faThumbsUp : reactions[0].emoticon === "love" ? faHeart : null} />
                         </span>
                     ) : null}
                 </span>
@@ -120,10 +121,10 @@ export default function PostCard({post, setPosts}) {
                 {menu && (
                     <div className="reaction-menu">
                         <button onClick={() => addReaction("like")}>
-                            <FontAwesomeIcon icon={faThumbsUp}/>
+                            <FontAwesomeIcon icon={faThumbsUp} />
                         </button>
                         <button onClick={() => addReaction("love")}>
-                            <FontAwesomeIcon icon={faHeart}/>
+                            <FontAwesomeIcon icon={faHeart} />
                         </button>
                     </div>
                 )}
@@ -132,7 +133,7 @@ export default function PostCard({post, setPosts}) {
                 <FontAwesomeIcon
                     className="reaction-button"
                     onClick={() => deletePostReaction()}
-                    icon={faTrash}/>
+                    icon={faTrash} />
             </div>
 
             {/* attention ici on laisse bien que 2 == sinon ça pète */}

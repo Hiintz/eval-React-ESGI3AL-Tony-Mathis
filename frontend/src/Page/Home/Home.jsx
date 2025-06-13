@@ -1,24 +1,31 @@
 import "./Home.css";
 import PostForm from "../../component/PostForm/PostForm.jsx";
-import PostList from "../../Component/PostList/PostList.jsx";
-import {useNavigate} from "react-router";
-import {useEffect, useState} from "react";
-import {useGetRequest} from "../../Utils/Hooks/useGetRequest.js";
+import PostList from "../../component/PostList/PostList.jsx";
+import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useGetRequest } from "../../Utils/Hooks/useGetRequest.js";
+import { usePostRequest } from "../../Utils/Hooks/usePostRequest.js";
 import errorImage from "./../../assets/lorax_chokbar.jpg"
-import {usePostRequest} from "../../Utils/Hooks/usePostRequest.js";
 
 
 export default function Home() {
     const [posts, setPosts] = useState([]);
-    const {data: resources, isLoading, error} = useGetRequest("post");
+    const [refreshForce, setRefreshForce] = useState(0);
+    const { data: resources, isLoading, error } = useGetRequest("post", refreshForce);
 
     const navigate = useNavigate();
-    const {postData} = usePostRequest(`post`);
+    const { postData } = usePostRequest(`post`);
+
+    // pour forcer le rafraichissement des posts
+    const forceRefresh = () => {
+        setRefreshForce((prev) => prev + 1);
+    }
 
 
     const handleCreatePost = async (formData) => {
         try {
             await postData(formData);
+            forceRefresh();
         } catch (error) {
             console.error("Erreur lors de la création du post :", error);
         }
@@ -31,7 +38,7 @@ export default function Home() {
             if (resources) {
                 setPosts(resources);
             }
-        }, [resources ,setPosts]
+        }, [resources, setPosts]
     )
 
     useEffect(() => {
@@ -52,15 +59,15 @@ export default function Home() {
             {error &&
                 <div className="error">
                     <h2>Par mes moustaches !</h2>
-                    <br/>
-                    <img src={errorImage} alt="Erreur"/>
+                    <br />
+                    <img src={errorImage} alt="Erreur" />
                 </div>}
 
             {/* Affichage des éléments de la page */}
             {posts && !error && (
                 <div className={"home-content"}>
-                    <PostForm onSubmit={handleCreatePost}/>
-                    <PostList posts={posts} setPosts={setPosts} />
+                    <PostForm onSubmit={handleCreatePost} />
+                    <PostList posts={posts} setPosts={setPosts} refreshPosts={forceRefresh} /> {/* on lui passe la fonction setPosts pour mettre à jour les posts */}
                 </div>
             )}
         </div>

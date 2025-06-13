@@ -1,6 +1,6 @@
-import {useState, useEffect, useCallback} from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-export function useGetRequest(url) {
+export function useGetRequest(url, refreshForce = 0) {
     const [data, setData] = useState(null);
     const [isLoading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -36,12 +36,12 @@ export function useGetRequest(url) {
     }, [url]);
 
     useEffect(() => {
-            getData().then(data => {
-                if(data){
-                    setData(data);
-                }
-            });
-    }, [url]);
+        getData().then(data => {
+            if (data) {
+                setData(data);
+            }
+        });
+    }, [url, refreshForce]);
 
-    return { data, isLoading, error,  getData };
+    return { data, isLoading, error, getData };
 }
