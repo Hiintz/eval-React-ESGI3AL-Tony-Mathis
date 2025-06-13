@@ -9,6 +9,7 @@ function Inscription() {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     function handleSubmit() {
         setIsLoading(true);
@@ -27,15 +28,15 @@ function Inscription() {
                 if (data.jwt) {
                     localStorage.setItem("token", data.jwt);
                     localStorage.setItem("idUser", data.idUser);
-                    alert("Connexion réussie");
+                    // alert("Connexion réussie");
                     navigate("/");
                 } else {
-                    alert("Erreur lors de la connexion");
+                    setError(data.error || "Utilisateur ou mot de passe incorrect");
                 }
             })
             .catch(error => {
                 console.error("Erreur:", error);
-                alert("Erreur lors de la connexion");
+                setError("Une erreur s'est produite.");
             })
             .finally(() => {
                 setIsLoading(false);
@@ -46,7 +47,7 @@ function Inscription() {
         if (email && password) {
             handleSubmit();
         } else {
-            alert("Merci de remplir tous les champs");
+            setError("Veuillez remplir tous les champs");
         }
     }
 
@@ -59,12 +60,13 @@ function Inscription() {
             <div className="form">
                 <div className="form-group">
                     <label htmlFor="email">Email</label>
-                    <input type="text" name="email" id="email" onKeyUp={(e) => setEmail(e.target.value)} />
+                    <input type="email" name="email" id="email" onKeyUp={(e) => setEmail(e.target.value)} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="password">Mot de passe</label>
                     <PasswordField onKeyUp={onPasswordChange} />
                 </div>
+                {error && <div className="error-message">{error}</div>}
                 <div className="form-group">
                     <button onClick={login} disabled={isLoading}>
                         {isLoading ? "Chargement..." : "Connexion"}

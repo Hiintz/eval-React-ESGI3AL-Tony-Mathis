@@ -12,6 +12,7 @@ function Inscription() {
     const [passwordCheck, setPasswordCheck] = useState();
     const [pwdError, setPwdError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     function handleSubmit() {
         setIsLoading(true);
@@ -29,7 +30,7 @@ function Inscription() {
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    alert(data.error);
+                    setError(data.error);
                 } else {
                     alert("Inscription réussie, vous pouvez maintenant vous connecter");
                     navigate("/login");
@@ -37,7 +38,7 @@ function Inscription() {
             })
             .catch(error => {
                 console.error("Erreur:", error);
-                alert("Erreur lors de l'inscription");
+                setError("Une erreur s'est produite.");
             })
             .finally(() => {
                 setIsLoading(false);
@@ -47,12 +48,12 @@ function Inscription() {
     function login() {
         if (email && password && passwordCheck) {
             if (password !== passwordCheck) {
-                alert("les deux mdp sont différents");
+                setError("Les mots de passe ne correspondent pas");
             } else {
                 handleSubmit();
             }
         } else {
-            alert("Merci de remplir tous les champs");
+            setError("Veuillez remplir tous les champs");
         }
     }
 
@@ -74,7 +75,7 @@ function Inscription() {
             <div className="form">
                 <div className="form-group">
                     <label htmlFor="email">Email</label>
-                    <input type="text" name="email" id="email" onKeyUp={(e) => setEmail(e.target.value)} />
+                    <input type="email" name="email" id="email" onKeyUp={(e) => setEmail(e.target.value)} />
                 </div>
                 <div className="form-group">
                     <label htmlFor="username">Nom d'utilisateur</label>
@@ -89,6 +90,7 @@ function Inscription() {
                     <PasswordField onKeyUp={onPasswordCheckChange} />
                 </div>
                 {pwdError && <div>Les deux mots de passes ne sont pas identiques</div>}
+                {error && <div className="error">{error}</div>}
                 <div className="form-group">
                     <button onClick={login} disabled={isLoading}>
                         {isLoading ? "Chargement..." : "Créer Compte"}

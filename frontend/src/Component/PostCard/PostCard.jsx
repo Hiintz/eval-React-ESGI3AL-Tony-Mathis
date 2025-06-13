@@ -140,47 +140,48 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
                         className="card-image"
                     />
                 ) : (
-                    <p className="card-placeholder"></p>
+                    <p className="nothing"></p>
                 )}
 
+                <div className="card-footer">
+                    {/* les réactions en fonction du nombre de celles-ci */}
+                    <span className="card-emoticons">
+                        {reactions.length > 1 ? (
+                            <span>{reactions.length} personnes ont réagi à ce post</span>
+                        ) : reactions.length === 1 && reactions[0]?.emoticon ? (
+                            <span>
+                                1{" "}<FontAwesomeIcon
+                                    icon={reactions[0].emoticon === "like" ? faThumbsUp : reactions[0].emoticon === "love" ? faHeart : null} />
+                            </span>
+                        ) : null}
+                    </span>
 
-                {/* les réactions en fonction du nombre de celles-ci */}
-                <span className="card-emoticons">
-                    {reactions.length > 1 ? (
-                        <span>{reactions.length} personnes ont réagi à ce post</span>
-                    ) : reactions.length === 1 && reactions[0]?.emoticon ? (
-                        <span>
-                            1{" "}<FontAwesomeIcon
-                                icon={reactions[0].emoticon === "like" ? faThumbsUp : reactions[0].emoticon === "love" ? faHeart : null} />
-                        </span>
-                    ) : null}
-                </span>
 
+                    {/* Bouton d'ajout de réactions */}
+                    <FontAwesomeIcon
+                        className="reaction-button"
+                        onClick={() => setMenu(!menu)}
+                        icon={faCirclePlus}
+                    />
 
-                {/* Bouton d'ajout de réactions */}
-                <FontAwesomeIcon
-                    className="reaction-button"
-                    onClick={() => setMenu(!menu)}
-                    icon={faCirclePlus}
-                />
+                    {/* menu des réactions */}
+                    {menu && (
+                        <div className="reaction-menu">
+                            <button onClick={() => addReaction("like")}>
+                                <FontAwesomeIcon icon={faThumbsUp} />
+                            </button>
+                            <button onClick={() => addReaction("love")}>
+                                <FontAwesomeIcon icon={faHeart} />
+                            </button>
+                        </div>
+                    )}
 
-                {/* menu des réactions */}
-                {menu && (
-                    <div className="reaction-menu">
-                        <button onClick={() => addReaction("like")}>
-                            <FontAwesomeIcon icon={faThumbsUp} />
-                        </button>
-                        <button onClick={() => addReaction("love")}>
-                            <FontAwesomeIcon icon={faHeart} />
-                        </button>
-                    </div>
-                )}
-
-                {/* Bouton de suppression des reactions */}
-                <FontAwesomeIcon
-                    className="reaction-button"
-                    onClick={() => deletePostReaction()}
-                    icon={faTrash} />
+                    {/* Bouton de suppression des reactions */}
+                    <FontAwesomeIcon
+                        className="reaction-button"
+                        onClick={() => deletePostReaction()}
+                        icon={faTrash} />
+                </div>
             </div>
 
             {/* attention ici on laisse bien que 2 == sinon ça pète */}
