@@ -11,7 +11,9 @@ import errorImage from "./../../assets/lorax_chokbar.jpg"
 export default function Home() {
     const [posts, setPosts] = useState([]);
     const [refreshForce, setRefreshForce] = useState(0);
-    const { data: resources, isLoading, error } = useGetRequest("post", refreshForce);
+    const [page, setPage] = useState(1);
+
+    const { data: resources, isLoading, error } = useGetRequest(`post/page/${page}`, refreshForce);
     // on recupère les user pour les afficher dans les posts
     const { data: users, isLoading: usersLoading, error: usersError } = useGetRequest("user");
 
@@ -79,7 +81,21 @@ export default function Home() {
                     <PostForm onSubmit={handleCreatePost} />
                     {/* on lui passe la fonction setPosts pour mettre à jour les posts */}
                     {/* et on passe users pour les afficher dans les posts */}
+                    <button className="prev-button" onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page <= 1}>
+                        Précédent
+                    </button>
+                    <span className="page-number">Page {page}</span>
+                    <button className="next-button" onClick={() => setPage((prev) => prev + 1)}>
+                        Suivant
+                    </button>
                     <PostList posts={posts} setPosts={setPosts} refreshPosts={forceRefresh} users={users} />
+                    <button className="prev-button" onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page <= 1}>
+                        Précédent
+                    </button>
+                    <span className="page-number">Page {page}</span>
+                    <button className="next-button" onClick={() => setPage((prev) => prev + 1)}>
+                        Suivant
+                    </button>
                 </div>
             )}
         </div>

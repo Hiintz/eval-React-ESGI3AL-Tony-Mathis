@@ -11,7 +11,12 @@ const getPage = async (req, res) => {
     if (!req.params.page) {
         return res.status(400).json({ error: "Vous devez sélectionner une page" });
     }
-    let result = await Post.findAll({ include: [{ model: Emoticon }], limit: 5, offset: (req.params.page - 1) * 5 });
+    let result = await Post.findAll({
+        include: [{ model: Emoticon }],
+        limit: 5,
+        offset: (req.params.page - 1) * 5,
+        order: [['createdAt', 'DESC']]
+    });
     res.status(200).json(result);
 }
 
