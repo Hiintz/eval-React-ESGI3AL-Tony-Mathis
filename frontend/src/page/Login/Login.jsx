@@ -58,6 +58,7 @@ function Inscription() {
     return (
         <>
             <div className="form">
+                <h1>Page de connexion</h1>
                 <div className="form-group">
                     <label htmlFor="email">Email</label>
                     <input type="email" name="email" id="email" onKeyUp={(e) => setEmail(e.target.value)} />
