@@ -32,7 +32,7 @@ function Inscription() {
                 if (data.error) {
                     setError(data.error);
                 } else {
-                    alert("Inscription réussie, vous pouvez maintenant vous connecter");
+                    // alert("Inscription réussie, vous pouvez maintenant vous connecter");
                     navigate("/login");
                 }
             })

@@ -12,6 +12,8 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
     const [menu, setMenu] = useState(false);
     const [reactions, setReactions] = useState(post.emoticons || []);
     const [isEditing, setIsEditing] = useState(false);
+    const [confirmDeleteEmotions, setConfirmDeleteEmotions] = useState(false);
+    const [AskConfimDeletePost, setAskConfirmDeletePost] = useState(false); // pour demander une confirmation avant de supprimer le post
     const { postData } = usePostRequest(`emoticon`);
     const { putData } = usePutRequest(`post/${post.id}`);
 
@@ -38,6 +40,8 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
             await postData(newReaction);
             // Mets à jour avec la nouvelle réaction dans le state
             setReactions((prev) => [...prev, newReaction])
+            // on enleve le message de confirmation de suppression
+            setConfirmDeleteEmotions(false);
         } catch (error) {
             console.error("Erreur lors de l'ajout de réaction :", error);
         }
@@ -51,7 +55,9 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
             await deleteReactions()
             // Mets à jour le nouveau tableau vidé
             setReactions([])
-            alert("Les reactions du post ont été supprimées");
+            // alert("Les reactions du post ont été supprimées");
+            // on affiche plutot un message de confirmation
+            setConfirmDeleteEmotions(true);
         }
         catch (error) {
             console.error("Erreur lors de la suppression de la réaction :", error);
@@ -61,11 +67,14 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
     // Supprimer le post (j'avais pas d'inspi sur le nom j'avoue)
     const deleteThePost = async () => {
         try {
-            if (confirm("Êtes-vous sûr de vouloir supprimer ce post ?")) {
+            if (AskConfimDeletePost) {
                 console.log("delete" + post.id)
                 await deletePost();
                 // Rafraîchit la liste des posts après suppression
                 refreshPosts();
+            } else {
+                // Si on n'a pas encore confirmé, on demande confirmation
+                setAskConfirmDeletePost(true);
             }
         } catch (error) {
             console.error("Erreur lors de la suppression du post :", error);
@@ -156,7 +165,6 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
                         ) : null}
                     </span>
 
-
                     {/* Bouton d'ajout de réactions */}
                     <FontAwesomeIcon
                         className="reaction-button"
@@ -183,7 +191,8 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
                         icon={faTrash} />
                 </div>
             </div>
-
+            {/* message de confirmation de suppression des reactions */}
+            {confirmDeleteEmotions && (<div>Les réactions du post ont été supprimées.</div>)}
             {/* attention ici on laisse bien que 2 == sinon ça pète */}
             {/* delete et update du post */}
             {userId == post.authorId && (
@@ -192,7 +201,7 @@ export default function PostCard({ post, setPosts, refreshPosts, users }) {
                         <FontAwesomeIcon icon={faEdit} /> Modifier
                     </button>
                     <button onClick={deleteThePost} className="close-button">
-                        Supprimer le post
+                        {AskConfimDeletePost ? "Confirmer la suppression ?" : "Supprimer le post"}
                     </button>
                 </div>
             )}
