@@ -2,7 +2,6 @@
 
 .Home {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -86,6 +85,12 @@
     height: auto;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.page-number {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
 @media (max-width: 768px) {
